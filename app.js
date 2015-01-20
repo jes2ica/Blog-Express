@@ -85,7 +85,21 @@ app.post('/upload',routes.checkLogin);
 app.post('/upload',routes.upload_post);
 
 app.get('/u/:name', routes.user_posts);
-app.get('/u/:name/:day/:title', routes.title_post);
+app.get('/u/:name/:day/:title', routes.title);
+app.post('/u/:name/:day/:title', routes.title_post)
+
+app.get('/edit/:name/:day/:title', routes.checkLogin);
+app.get('/edit/:name/:day/:title', routes.edit);
+app.post('/edit/:name/:day/:title', routes.checkLogin);
+app.post('/edit/:name/:day/:title', routes.edit_post);
+
+app.get('/remove/:name/:day/:title', routes.checkLogin);
+app.get('/remove/:name/:day/:title', routes.remove);
+
+app.get('/archive', routes.archive);
+
+app.get('/tags', routes.tags);
+app.get('/tags/:tag', routes.tag);
 
 app.get('/users', user.list);
 
