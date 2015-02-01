@@ -84,6 +84,8 @@ app.get('/upload',routes.upload);
 app.post('/upload',routes.checkLogin);
 app.post('/upload',routes.upload_post);
 
+app.get('/search', routes.search);
+
 app.get('/u/:name', routes.user_posts);
 app.get('/u/:name/:day/:title', routes.title);
 app.post('/u/:name/:day/:title', routes.title_post)
