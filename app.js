@@ -92,7 +92,7 @@ app.get('/search', routes.search);
 
 app.get('/u/:name', routes.user_posts);
 app.get('/u/:name/:day/:title', routes.title);
-app.post('/u/:name/:day/:title', routes.title_post)
+app.post('/u/:name/:day/:title', routes.title_post);
 
 app.get('/edit/:name/:day/:title', routes.checkLogin);
 app.get('/edit/:name/:day/:title', routes.edit);
