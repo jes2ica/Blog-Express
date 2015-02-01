@@ -58,6 +58,10 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
+app.use(function (req, res) {
+  res.render("404");
+});
+
 app.get('/', routes.index);
 
 app.get('/reg',routes.checkNotLogin);
@@ -104,6 +108,7 @@ app.get('/tags', routes.tags);
 app.get('/tags/:tag', routes.tag);
 
 app.get('/users', user.list);
+
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
