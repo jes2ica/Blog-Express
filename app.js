@@ -15,6 +15,9 @@ var MongoStore = require('connect-mongo')(session);
 var methodOverride = require('method-override');
 var multer = require('multer');
 
+var fs = require('fs');
+var accessLog = fs.createWriteStream('access.log', {flags: 'a'});
+var errorLog = fs.createWriteStream('error.log', {flags: 'a'});
 var app = express();
 
 // all environments
@@ -41,11 +44,17 @@ app.use(session({
 app.use(flash());
 app.use(express.favicon());
 app.use(express.logger('dev'));
+app.use(express.logger({stream: accessLog}));
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(methodOverride('X-HTTP-Method-Override'));
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(function (err, req, res, next) {
+  var meta = '[' + new Date() + ']' + req.url + '\n';
+  errorLog.write(meta + err.stack + '\n');
+  next();
+})
 app.use(multer({
   dest: './public/images',
   rename: function (fieldname, filename) {
@@ -91,16 +100,16 @@ app.post('/upload',routes.upload_post);
 app.get('/search', routes.search);
 
 app.get('/u/:name', routes.user_posts);
-app.get('/u/:name/:day/:title', routes.title);
-app.post('/u/:name/:day/:title', routes.title_post);
+app.get('/p/:_id', routes.getPost);
+app.post('/p/:_id', routes.addComment);
 
-app.get('/edit/:name/:day/:title', routes.checkLogin);
-app.get('/edit/:name/:day/:title', routes.edit);
-app.post('/edit/:name/:day/:title', routes.checkLogin);
-app.post('/edit/:name/:day/:title', routes.edit_post);
+app.get('/edit/:_id', routes.checkLogin);
+app.get('/edit/:_id', routes.edit);
+app.post('/edit/:_id', routes.checkLogin);
+app.post('/edit/:_id', routes.edit_post);
 
-app.get('/remove/:name/:day/:title', routes.checkLogin);
-app.get('/remove/:name/:day/:title', routes.remove);
+app.get('/remove/:_id', routes.checkLogin);
+app.get('/remove/:_id', routes.remove);
 
 app.get('/archive', routes.archive);
 

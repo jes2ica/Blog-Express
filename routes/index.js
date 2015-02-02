@@ -197,14 +197,14 @@ exports.user_posts = function(req, res) {
 	});
 };
 
-exports.title = function(req, res) {
-	Post.getOne(req.params.name, req.params.day, req.params.title, function(err, post) {
+exports.getPost = function(req, res) {
+	Post.getOne(req.params._id, function(err, post) {
 		if(err) {
 			req.flash('error', err);
 			return res.redirect('/');
 		}
 		res.render('article', {
-			title: req.params.title,
+			title: post.title,
 			post: post,
 			user: req.session.user,
 			success: req.flash('success').toString(),
@@ -213,7 +213,7 @@ exports.title = function(req, res) {
 	});
 };
 
-exports.title_post = function (req, res) {
+exports.addComment = function (req, res) {
 	var date = new Date(),
 			time = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + 
 						 date.getHours() + ":" + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes());
@@ -231,7 +231,7 @@ exports.title_post = function (req, res) {
 		content: req.body.content
 	};
 
-	var newComment = new Comment(req.params.name, req.params.day, req.params.title, comment);
+	var newComment = new Comment(req.params._id, comment);
 	newComment.save(function (err) {
 		if(err) {
 			req.flash('error', err);
@@ -244,7 +244,7 @@ exports.title_post = function (req, res) {
 
 exports.edit = function(req, res) {
 	var currentUser = req.session.user;
-	Post.edit(currentUser.name, req.params.day, req.params.title, function(err, post) {
+	Post.edit(req.params._id, function(err, post) {
 		if(err) {
 			req.flash('error', err);
 			return res.redirect('back');
@@ -261,8 +261,8 @@ exports.edit = function(req, res) {
 
 exports.edit_post = function(req, res) {
 	var currentUser = req.session.user;
-	Post.update(currentUser.name, req.params.day, req.params.title, req.body.post, function(err) {
-		var url = encodeURI('/u/' + req.params.name + '/' + req.params.day + '/' + req.params.title);
+	Post.update(req.params._id, req.body.post, function(err) {
+		var url = encodeURI('/p/' + req.params._id);
 		if(err) {
 			req.flash('error', err);
 			return res.redirect(url);//出错！返回文章页
@@ -274,7 +274,7 @@ exports.edit_post = function(req, res) {
 
 exports.remove = function(req, res) {
 	var currentUser = req.session.user;
-	Post.remove(currentUser.name, req.params.day, req.params.title, function(err) {
+	Post.remove(req.params._id, function(err) {
 		if(err) {
 			req.flash('error', err);
 			return res.redirect('back');
